@@ -5,12 +5,16 @@ import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "usuarios")
+@EntityListeners(AuditingEntityListener.class)
 public class Usuario {
 
     @Id
@@ -34,8 +38,12 @@ public class Usuario {
 
     private Role role;
 
+    @CreatedDate
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     public Usuario() {
@@ -48,15 +56,15 @@ public class Usuario {
         this.email = email;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        setCreatedAt(LocalDateTime.now());
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        setUpdatedAt(LocalDateTime.now());
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        setCreatedAt(LocalDateTime.now());
+//    }
+//
+//    @PreUpdate
+//    protected void onUpdate() {
+//        setUpdatedAt(LocalDateTime.now());
+//    }
 
     public Long getId() {
         return id;

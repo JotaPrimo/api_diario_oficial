@@ -3,11 +3,13 @@ package com.api.diario_oficial.api_diario_oficial.entity;
 import com.api.diario_oficial.api_diario_oficial.enums.SimNao;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "arquivos")
+@EntityListeners(AuditingEntityListener.class)
 public class Arquivo {
 
     @Id
