@@ -27,8 +27,8 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cliente cliente;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'INATIVO'")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "INATIVO")
     private StatusUsuario statusUsuario;
 
     private String password;
@@ -36,6 +36,7 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @CreatedDate
@@ -56,15 +57,16 @@ public class Usuario {
         this.email = email;
     }
 
-//    @PrePersist
-//    protected void onCreate() {
-//        setCreatedAt(LocalDateTime.now());
-//    }
-//
-//    @PreUpdate
-//    protected void onUpdate() {
-//        setUpdatedAt(LocalDateTime.now());
-//    }
+    @PrePersist
+    protected void onCreate() {
+        setCreatedAt(LocalDateTime.now());
+        setStatusUsuario(StatusUsuario.INATIVO);
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        setUpdatedAt(LocalDateTime.now());
+    }
 
     public Long getId() {
         return id;

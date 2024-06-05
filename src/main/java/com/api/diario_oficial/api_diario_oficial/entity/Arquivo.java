@@ -24,16 +24,16 @@ public class Arquivo {
     @JoinColumn(name = "orgao_governamental_id")
     private OrgaoGovernamental orgaoGovernamental;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'NAO'")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "NAO")
     private SimNao baixado;
 
     private String path;
 
     private String fileName;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'NAO'")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "NAO")
     private SimNao deletado;
 
     private LocalDateTime createdAt;
