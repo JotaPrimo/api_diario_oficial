@@ -7,6 +7,7 @@ import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioCreate
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,11 @@ import java.util.List;
 public class UsuarioController {
 
     private IUsuarioService usuarioService;
+    private ApplicationEventPublisher eventPublisher;
 
-    public UsuarioController(@Qualifier("usuarioServiceImpl") IUsuarioService usuarioService) {
+    public UsuarioController(@Qualifier("usuarioServiceImpl") IUsuarioService usuarioService, ApplicationEventPublisher eventPublisher) {
         this.usuarioService = usuarioService;
+        this.eventPublisher = eventPublisher;
     }
 
     @GetMapping
@@ -37,7 +40,9 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> store(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO) {
         Usuario usuarioToSave = UsuarioCreateDTO.toEntity(usuarioCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioResponseDTO.fromEntity(usuarioService.save(usuarioToSave)));
+        Usuario usuarioSaved = usuarioService.save(usuarioToSave);
+        eventPublisher.publishEvent(usuarioSaved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioResponseDTO.fromEntity(usuarioSaved));
     }
 
 }
