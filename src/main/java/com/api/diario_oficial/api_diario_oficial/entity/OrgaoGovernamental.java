@@ -4,7 +4,6 @@ package com.api.diario_oficial.api_diario_oficial.entity;
 import com.api.diario_oficial.api_diario_oficial.enums.SimNao;
 import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,8 +33,8 @@ public class OrgaoGovernamental {
     @OneToMany(mappedBy = "orgaoGovernamental", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cliente> clientes = new ArrayList<>();
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'NAO'")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "NAO")
     private SimNao deletado;
 
     private LocalDateTime createdAt;
@@ -45,7 +44,6 @@ public class OrgaoGovernamental {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        deletado = SimNao.NAO;
     }
 
     @PreUpdate

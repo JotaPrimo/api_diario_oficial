@@ -1,5 +1,6 @@
 package com.api.diario_oficial.api_diario_oficial.entity;
 
+import com.api.diario_oficial.api_diario_oficial.enums.SimNao;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,10 @@ public class Diario {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orgao_governamental_id")
     private OrgaoGovernamental orgaoGovernamental;
+
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'NAO'")
+    @Enumerated(EnumType.STRING)
+    private SimNao deletado;
 
     private LocalDateTime createdAt;
 

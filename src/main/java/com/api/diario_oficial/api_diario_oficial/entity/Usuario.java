@@ -5,12 +5,16 @@ import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "usuarios")
+@EntityListeners(AuditingEntityListener.class)
 public class Usuario {
 
     @Id
@@ -23,8 +27,8 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cliente cliente;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'INATIVO'")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "INATIVO")
     private StatusUsuario statusUsuario;
 
     private String password;
@@ -32,10 +36,15 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
+    @CreatedDate
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     public Usuario() {
@@ -51,6 +60,7 @@ public class Usuario {
     @PrePersist
     protected void onCreate() {
         setCreatedAt(LocalDateTime.now());
+        setStatusUsuario(StatusUsuario.INATIVO);
     }
 
     @PreUpdate

@@ -73,7 +73,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public List<Usuario> findAllSortedById() {
-        return List.of();
+        return usuarioRepository.findAllOrderById();
     }
 
     @Override
