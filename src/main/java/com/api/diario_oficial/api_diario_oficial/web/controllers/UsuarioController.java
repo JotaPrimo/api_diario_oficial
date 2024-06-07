@@ -8,18 +8,18 @@ import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioRespon
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(ApiPath.USUARIOS)
 public class UsuarioController {
 
@@ -32,9 +32,12 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDTO>> index() {
-        List<Usuario> usuarioList = usuarioService.findAllSortedById();
-        return ResponseEntity.ok(UsuarioResponseDTO.convertList(usuarioList));
+    public Page<UsuarioResponseDTO> index(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return usuarioService.findAll(pageable).map(UsuarioResponseDTO::fromEntity);
     }
 
     @PostMapping
