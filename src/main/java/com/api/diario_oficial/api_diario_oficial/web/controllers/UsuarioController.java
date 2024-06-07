@@ -2,6 +2,7 @@ package com.api.diario_oficial.api_diario_oficial.web.controllers;
 
 import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
+import com.api.diario_oficial.api_diario_oficial.events.UsuarioCriadoEvent;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioCreateDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioResponseDTO;
@@ -44,7 +45,10 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> store(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO) {
         Usuario usuarioToSave = UsuarioCreateDTO.toEntity(usuarioCreateDTO);
         Usuario usuarioSaved = usuarioService.save(usuarioToSave);
-        eventPublisher.publishEvent(usuarioSaved);
+
+        UsuarioCriadoEvent event = new UsuarioCriadoEvent(this, usuarioSaved);
+        eventPublisher.publishEvent(event);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioResponseDTO.fromEntity(usuarioSaved));
     }
 

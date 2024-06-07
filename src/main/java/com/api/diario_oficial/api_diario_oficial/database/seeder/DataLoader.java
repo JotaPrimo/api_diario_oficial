@@ -12,7 +12,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // usuarioSeeder.seedUsuarios();
+        //usuarioSeeder.seedUsuarios();
     }
 
 }
