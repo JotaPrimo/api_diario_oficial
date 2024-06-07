@@ -33,4 +33,5 @@ public class UsuarioSeeder {
             usuarioService.save(usuario);
         });
     }
+
 }
