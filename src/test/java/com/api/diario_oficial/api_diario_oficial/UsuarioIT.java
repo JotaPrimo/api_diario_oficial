@@ -1,96 +1,113 @@
 package com.api.diario_oficial.api_diario_oficial;
 
+import com.api.diario_oficial.api_diario_oficial.auth.Credentials;
 import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
-import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
-import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioResponseDTO;
-
-import org.assertj.core.api.Assertions;
+import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "/sql/usuarios/usuarios-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "/sql/usuarios/usuarios-truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class UsuarioIT {
 
+
     @Autowired
     WebTestClient webTestClient;
 
-    // Constantes para dados de teste
-    private static final String TEST_USERNAME = "jughead_jones";
-    private static final String TEST_USERNAME_INVALID = "nes";
-    private static final String TEST_EMAIL = "jughead_jones@gmail.com";
-    private static final String TEST_PASSWORD = "12345678";
-    private static final String TEST_PASSWORD_INVALID = "678";
-    private static final LocalDateTime TEST_CREATED_AT = LocalDateTime.now();
-    private static final Role TEST_ROLE = Role.ROLE_COLABORADOR;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
-    @Test
-    public void createUser_withUserNameAndPasswordValid_returnStatusCreated() {
-        // cen�rio
+
+    public static JwtUserDetails getValidCredentialsLogin() {
         Usuario usuario = new Usuario();
-        usuario.setUsername(TEST_USERNAME);
-        usuario.setEmail(TEST_EMAIL);
-        usuario.setPassword(TEST_PASSWORD);
-        usuario.setCreatedAt(TEST_CREATED_AT);
-        usuario.setRole(TEST_ROLE);
+        usuario.setUsername(Credentials.TEST_LOGIN_VALID);
+        usuario.setPassword(Credentials.TEST_PASSWORD_VALID);
+        usuario.setRole(Role.ROLE_ADMIN);
 
-        //
-        UsuarioResponseDTO responseBody = webTestClient
-                .post()
-                .uri(ApiPath.USUARIOS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(usuario)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(UsuarioResponseDTO.class)
-                .returnResult()
-                .getResponseBody();
+        return new JwtUserDetails(usuario);
+    }
 
-        // assetion
-        Assertions.assertThat(responseBody).isNotNull().withFailMessage("responseBody est� null");
-        Assertions.assertThat(responseBody.id()).isNotNull().withFailMessage("Id n�o deveria ser null");
-        Assertions.assertThat(responseBody.nome()).isEqualTo(TEST_USERNAME).withFailMessage("Username diferente de jughead_jones");
-        Assertions.assertThat(responseBody.email()).isEqualTo(TEST_EMAIL).withFailMessage("Email diferente");
+    public static JwtUserDetails getInvalidCredentialsLogin() {
+        Usuario usuario = new Usuario();
+        usuario.setUsername(Credentials.TEST_LOGIN_INVALID);
+        usuario.setPassword(Credentials.TEST_PASSWORD_VALID);
+        usuario.setRole(Role.ROLE_ADMIN);
+
+        return new JwtUserDetails(usuario);
     }
 
     @Test
-    public void createUser_withPasswordInvalid_returnUnprocessableEntity() {
-        // cen�rio
-        Usuario usuario = new Usuario();
-        usuario.setUsername(TEST_USERNAME);
-        usuario.setEmail(TEST_EMAIL);
-        usuario.setPassword(TEST_PASSWORD_INVALID);
-        usuario.setCreatedAt(TEST_CREATED_AT);
-        usuario.setRole(TEST_ROLE);
+    void shouldReturnForbiden403WhenUserOrPasswordInvalid() {
+        // dados validos para login
+        JwtUserDetails jwtUserDetails = getInvalidCredentialsLogin();
 
-        // A��o
-        WebTestClient.BodyContentSpec responseBody = webTestClient
-                .post()
-                .uri(ApiPath.USUARIOS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(usuario)
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY)
-                .expectBody();
+       ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.LOGIN, jwtUserDetails, String.class);
+        String jwtToken = loginResponse.getBody();
 
-        // assetion
-        Assertions.assertThat(responseBody.jsonPath("$.path")).isEqualTo(ApiPath.USUARIOS).withFailMessage("path inv�lido");
-        Assertions.assertThat(responseBody.jsonPath("$.method")).isEqualTo("POST").withFailMessage("method inv�lido");
-        Assertions.assertThat(responseBody.jsonPath("$.errors.password")).isEqualTo("Password deve ter entre 8 e 10 caracteres").withFailMessage("method inv�lido");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-
+        ResponseEntity<String> response = restTemplate.exchange(ApiPath.USUARIOS, HttpMethod.GET, entity, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
+
+    @SneakyThrows
+    @Test
+    void shouldReturnListUsersWhenUserAndPasswordValid() {
+        // Login and get JWT token
+        JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
+
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.AUTENTICAR, jwtUserDetails, String.class);
+        JSONObject loginResponseJon = new JSONObject(loginResponse.getBody());
+
+        // Use JWT token to access protected endpoint
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + loginResponseJon.getString("token"));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(ApiPath.USUARIOS, HttpMethod.GET, entity, String.class);
+        JSONObject responseJsonList = new JSONObject(response.getBody());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
+
+        // verificandopaginação
+        assertThat(responseJsonList.has("content")).isTrue();
+        assertThat(responseJsonList.has("pageable")).isTrue();
+        assertThat(responseJsonList.has("totalPages")).isTrue();
+        assertThat(responseJsonList.getString("totalPages")).asInt().isEqualTo(6);
+        assertThat(responseJsonList.has("totalElements")).isTrue();
+        assertThat(responseJsonList.getString("totalElements")).asInt().isEqualTo(53);
+        assertThat(responseJsonList.has("last")).isTrue();
+        assertThat(responseJsonList.has("first")).isTrue();
+        assertThat(responseJsonList.has("size")).isTrue();
+        assertThat(responseJsonList.has("number")).isTrue();
+        assertThat(responseJsonList.has("sort")).isTrue();
+        assertThat(responseJsonList.has("numberOfElements")).isTrue();
+        assertThat(responseJsonList.has("empty")).isTrue();
+
+        // verificando se a lista não é vazia
+        JSONArray contentArray = responseJsonList.getJSONArray("content");
+        assertThat(contentArray).isNotNull();
+    }
+
+
 
 }
