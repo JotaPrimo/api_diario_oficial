@@ -7,6 +7,8 @@ import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoun
 import com.api.diario_oficial.api_diario_oficial.database.repository.IUsuarioRepository;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,14 +68,20 @@ public class UsuarioServiceImpl implements IUsuarioService {
         return usuarioRepository.findRoleByUsername(username);
     }
 
+
     @Override
     public List<Usuario> findAll() {
-        return List.of();
+        return usuarioRepository.findAll();
     }
 
     @Override
-    public List<Usuario> findAllSortedById() {
-        return usuarioRepository.findAllOrderById();
+    public Page<Usuario> findAll(Pageable pageable) {
+        return usuarioRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Usuario> findAllSortedById(Pageable pageable) {
+        return usuarioRepository.findAll(pageable);
     }
 
     @Override

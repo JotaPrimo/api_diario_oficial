@@ -38,7 +38,7 @@ public class UsuarioIT {
 
     @Test
     public void createUser_withUserNameAndPasswordValid_returnStatusCreated() {
-        // cenário
+        // cenï¿½rio
         Usuario usuario = new Usuario();
         usuario.setUsername(TEST_USERNAME);
         usuario.setEmail(TEST_EMAIL);
@@ -46,7 +46,7 @@ public class UsuarioIT {
         usuario.setCreatedAt(TEST_CREATED_AT);
         usuario.setRole(TEST_ROLE);
 
-        // ação
+        //
         UsuarioResponseDTO responseBody = webTestClient
                 .post()
                 .uri(ApiPath.USUARIOS)
@@ -59,15 +59,15 @@ public class UsuarioIT {
                 .getResponseBody();
 
         // assetion
-        Assertions.assertThat(responseBody).isNotNull().withFailMessage("responseBody está null");
-        Assertions.assertThat(responseBody.id()).isNotNull().withFailMessage("Id não deveria ser null");
+        Assertions.assertThat(responseBody).isNotNull().withFailMessage("responseBody estï¿½ null");
+        Assertions.assertThat(responseBody.id()).isNotNull().withFailMessage("Id nï¿½o deveria ser null");
         Assertions.assertThat(responseBody.nome()).isEqualTo(TEST_USERNAME).withFailMessage("Username diferente de jughead_jones");
         Assertions.assertThat(responseBody.email()).isEqualTo(TEST_EMAIL).withFailMessage("Email diferente");
     }
 
     @Test
     public void createUser_withPasswordInvalid_returnUnprocessableEntity() {
-        // cenário
+        // cenï¿½rio
         Usuario usuario = new Usuario();
         usuario.setUsername(TEST_USERNAME);
         usuario.setEmail(TEST_EMAIL);
@@ -75,7 +75,7 @@ public class UsuarioIT {
         usuario.setCreatedAt(TEST_CREATED_AT);
         usuario.setRole(TEST_ROLE);
 
-        // Ação
+        // Aï¿½ï¿½o
         WebTestClient.BodyContentSpec responseBody = webTestClient
                 .post()
                 .uri(ApiPath.USUARIOS)
@@ -86,9 +86,9 @@ public class UsuarioIT {
                 .expectBody();
 
         // assetion
-        Assertions.assertThat(responseBody.jsonPath("$.path")).isEqualTo(ApiPath.USUARIOS).withFailMessage("path inválido");
-        Assertions.assertThat(responseBody.jsonPath("$.method")).isEqualTo("POST").withFailMessage("method inválido");
-        Assertions.assertThat(responseBody.jsonPath("$.errors.password")).isEqualTo("Password deve ter entre 8 e 10 caracteres").withFailMessage("method inválido");
+        Assertions.assertThat(responseBody.jsonPath("$.path")).isEqualTo(ApiPath.USUARIOS).withFailMessage("path invï¿½lido");
+        Assertions.assertThat(responseBody.jsonPath("$.method")).isEqualTo("POST").withFailMessage("method invï¿½lido");
+        Assertions.assertThat(responseBody.jsonPath("$.errors.password")).isEqualTo("Password deve ter entre 8 e 10 caracteres").withFailMessage("method invï¿½lido");
 
 
     }
