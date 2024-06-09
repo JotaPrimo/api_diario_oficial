@@ -52,4 +52,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioResponseDTO.fromEntity(usuarioSaved));
     }
 
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> show(@PathVariable Long id) {
+        Usuario usuario = usuarioService.findOrFail(id);
+        return ResponseEntity.ok(UsuarioResponseDTO.fromEntity(usuario));
+    }
+
 }

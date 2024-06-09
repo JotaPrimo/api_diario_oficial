@@ -91,7 +91,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Usuario findOrFail(Long id) throws EntityNotFoundException {
-        return null;
+        return usuarioRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Usuario com id '%s' não foi encontrado", id))
+        );
     }
 
     @Override
