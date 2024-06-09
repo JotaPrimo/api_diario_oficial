@@ -17,7 +17,7 @@ public class Credentials {
 
     // autenticação
     public static final String TEST_LOGIN_INVALID = "000000";
-    public static final String TEST_LOGIN_VALID = "asia.graham";
+    public static final String TEST_LOGIN_VALID = "caleb_romeo";
     public static final String TEST_PASSWORD_VALID = "12345678";
     
 }

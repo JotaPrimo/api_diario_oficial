@@ -103,17 +103,21 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public Usuario update(Usuario entity, Long id) throws EntityNotFoundException {
-        return null;
+    public Usuario update(Usuario usuario) throws EntityNotFoundException {
+        if (existsById(usuario.getId())) {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            return usuarioRepository.save(usuario);
+        }
+        throw new EntityNotFoundException(String.format("Usuário de id %s não encontrado", usuario.getId()));
     }
 
     @Override
     public void delete(Usuario entity) throws EntityNotFoundException {
-
+        usuarioRepository.delete(entity);
     }
 
     @Override
     public boolean existsById(Long id) {
-        return false;
+        return usuarioRepository.existsById(id);
     }
 }

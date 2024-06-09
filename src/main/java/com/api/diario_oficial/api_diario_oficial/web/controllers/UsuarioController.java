@@ -2,10 +2,12 @@ package com.api.diario_oficial.api_diario_oficial.web.controllers;
 
 import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
+import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.events.UsuarioCriadoEvent;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioCreateDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioResponseDTO;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioUpdateDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -57,6 +59,22 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> show(@PathVariable Long id) {
         Usuario usuario = usuarioService.findOrFail(id);
         return ResponseEntity.ok(UsuarioResponseDTO.fromEntity(usuario));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) {
+        Usuario usuarioToUpdate = UsuarioUpdateDTO.toEntity(usuarioUpdateDTO, usuarioService.findOrFail(id));
+
+        usuarioService.update(usuarioToUpdate);
+
+        return ResponseEntity.ok(UsuarioResponseDTO.fromEntity(usuarioToUpdate));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> delete(@PathVariable Long id) {
+        Usuario usuarioToDelete = usuarioService.findOrFail(id);
+        usuarioService.delete(usuarioToDelete);
+        return ResponseEntity.noContent().build();
     }
 
 }

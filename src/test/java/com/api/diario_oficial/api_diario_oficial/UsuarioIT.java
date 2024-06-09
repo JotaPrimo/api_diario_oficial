@@ -5,6 +5,8 @@ import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioUpdateDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -20,9 +22,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,6 +38,9 @@ public class UsuarioIT {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     public static JwtUserDetails getValidCredentialsLogin() {
@@ -60,6 +62,16 @@ public class UsuarioIT {
     }
 
     @SneakyThrows
+    public String getValidToken() {
+        JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
+
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.AUTENTICAR, jwtUserDetails, String.class);
+        JSONObject loginResponseJson = new JSONObject(loginResponse.getBody());
+
+        return "Bearer " + loginResponseJson.getString("token");
+    }
+
+    @SneakyThrows
     public HttpEntity<String> getValidHeaderAuthentication() {
         // Login and get JWT token
         JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
@@ -75,12 +87,27 @@ public class UsuarioIT {
         return entity;
     }
 
+    @SneakyThrows
+    public HttpHeaders getOnlyValidHeaderAuthentication() {
+        // Login and get JWT token
+        JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
+
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.AUTENTICAR, jwtUserDetails, String.class);
+        JSONObject loginResponseJon = new JSONObject(loginResponse.getBody());
+
+        // Use JWT token to access protected endpoint
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + loginResponseJon.getString("token"));
+
+        return headers;
+    }
+
     @Test
     void shouldReturnForbiden403WhenUserOrPasswordInvalid() {
         // dados validos para login
         JwtUserDetails jwtUserDetails = getInvalidCredentialsLogin();
 
-       ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.LOGIN, jwtUserDetails, String.class);
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.LOGIN, jwtUserDetails, String.class);
         String jwtToken = loginResponse.getBody();
 
         HttpHeaders headers = new HttpHeaders();
@@ -169,5 +196,63 @@ public class UsuarioIT {
         assertThat(responseJson.getString("message")).isEqualTo("Usuario com id '9999' não foi encontrado");
     }
 
+    @Test
+    @SneakyThrows
+    void shouldReturn204WhenUserIsDeleted() {
+        HttpEntity<String> entity = getValidHeaderAuthentication();
+
+        ResponseEntity<String> response = restTemplate.exchange(ApiPath.USUARIOS + "/10", HttpMethod.DELETE, entity, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturn404WhenUserIsNotFound() {
+        HttpEntity<String> entity = getValidHeaderAuthentication();
+
+        ResponseEntity<String> response = restTemplate.exchange(ApiPath.USUARIOS + "/100000", HttpMethod.DELETE, entity, String.class);
+        JSONObject responseJson = new JSONObject(response.getBody());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(responseJson).isNotNull();
+        assertThat(responseJson.has("path")).isTrue();
+        assertThat(responseJson.getString("path")).isEqualTo("/api/v1/usuarios/100000");
+        assertThat(responseJson.has("method")).isTrue();
+        assertThat(responseJson.getString("method")).isEqualTo(HttpMethod.DELETE.toString());
+        assertThat(responseJson.has("status")).isTrue();
+        assertThat(responseJson.getInt("status")).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(responseJson.has("statusText")).isTrue();
+        assertThat(responseJson.getString("statusText")).isEqualTo("Not Found");
+        assertThat(responseJson.has("message")).isTrue();
+        assertThat(responseJson.getString("message")).isEqualTo("Usuario com id '100000' não foi encontrado");
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturn200AndUpdatedData() {
+        UsuarioUpdateDTO usuarioUpdateDTO = new UsuarioUpdateDTO("kelley.turcotte.editado", "marcus.bode@hotmail.com", "12345678", Role.ROLE_CLIENTE_ADMIN.toString());
+
+        webTestClient.patch()
+                .uri(ApiPath.USUARIOS + "/9")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getValidToken())
+                .bodyValue(usuarioUpdateDTO)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.id").exists()
+                .jsonPath("$.id").isEqualTo(9L)
+                .jsonPath("$.username").exists()
+                .jsonPath("$.username").isEqualTo("kelley.turcotte.editado")
+                .jsonPath("$.password").doesNotExist();
+                // .jsonPath("$.role").exists()
+                // .jsonPath("$.role").isEqualTo(Role.ROLE_CLIENTE_ADMIN.toString())
+                // .jsonPath("$.createdAt").exists()
+                // .jsonPath("$.updatedAt").exists()
+                // .jsonPath("$.updatedAt").isNotEmpty();
+    }
 
 }
