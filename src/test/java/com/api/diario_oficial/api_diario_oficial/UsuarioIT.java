@@ -247,12 +247,12 @@ public class UsuarioIT {
                 .jsonPath("$.id").isEqualTo(9L)
                 .jsonPath("$.username").exists()
                 .jsonPath("$.username").isEqualTo("kelley.turcotte.editado")
-                .jsonPath("$.password").doesNotExist();
-                // .jsonPath("$.role").exists()
-                // .jsonPath("$.role").isEqualTo(Role.ROLE_CLIENTE_ADMIN.toString())
-                // .jsonPath("$.createdAt").exists()
-                // .jsonPath("$.updatedAt").exists()
-                // .jsonPath("$.updatedAt").isNotEmpty();
+                .jsonPath("$.password").doesNotExist()
+                .jsonPath("$.role").exists()
+                .jsonPath("$.role").isEqualTo(Role.ROLE_CLIENTE_ADMIN.toString())
+                .jsonPath("$.createdAt").exists()
+                .jsonPath("$.updatedAt").exists()
+                .jsonPath("$.updatedAt").isNotEmpty();
     }
 
 }

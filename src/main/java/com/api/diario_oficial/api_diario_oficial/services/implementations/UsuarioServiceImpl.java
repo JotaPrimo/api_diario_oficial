@@ -1,10 +1,10 @@
 package com.api.diario_oficial.api_diario_oficial.services.implementations;
 
+import com.api.diario_oficial.api_diario_oficial.database.repository.IUsuarioRepository;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
-import com.api.diario_oficial.api_diario_oficial.database.repository.IUsuarioRepository;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
 import org.springframework.data.domain.Page;
