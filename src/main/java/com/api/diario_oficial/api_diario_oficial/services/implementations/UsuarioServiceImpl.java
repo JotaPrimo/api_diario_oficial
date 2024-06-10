@@ -38,12 +38,16 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public void inativarUsuario(Long id) throws EntityNotFoundException {
-
+        Usuario usuario = findOrFail(id);
+        usuario.setStatusUsuario(StatusUsuario.INATIVO);
+        usuarioRepository.save(usuario);
     }
 
     @Override
     public void ativarUsuario(Long id) throws EntityNotFoundException {
-
+        Usuario usuario = findOrFail(id);
+        usuario.setStatusUsuario(StatusUsuario.ATIVO);
+        usuarioRepository.save(usuario);
     }
 
     @Override
