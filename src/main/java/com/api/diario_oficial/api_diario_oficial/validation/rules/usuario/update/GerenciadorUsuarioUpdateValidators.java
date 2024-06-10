@@ -1,8 +1,7 @@
-package com.api.diario_oficial.api_diario_oficial.validation.usuario.update;
+package com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.update;
 
 import com.api.diario_oficial.api_diario_oficial.database.repository.IUsuarioRepository;
-import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
-import com.api.diario_oficial.api_diario_oficial.validation.IBaseManagerValidators;
+import com.api.diario_oficial.api_diario_oficial.validation.rules.IBaseManagerValidators;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
