@@ -6,7 +6,6 @@ import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioUpdateDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -38,10 +37,6 @@ public class UsuarioIT {
 
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
 
     public static JwtUserDetails getValidCredentialsLogin() {
         Usuario usuario = new Usuario();
@@ -253,6 +248,57 @@ public class UsuarioIT {
                 .jsonPath("$.createdAt").exists()
                 .jsonPath("$.updatedAt").exists()
                 .jsonPath("$.updatedAt").isNotEmpty();
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnMessageSuccessWhenUsuarioAtivado() {
+        webTestClient.patch()
+                .uri(ApiPath.USUARIOS + "/9/" + "ativar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getValidToken())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.message").exists()
+                .jsonPath("$.message").isEqualTo("Usuário ativado com sucesso");
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnMessageSuccessWhenUsuarioInativado() {
+        webTestClient.patch()
+                .uri(ApiPath.USUARIOS + "/9/" + "inativar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getValidToken())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.message").exists()
+                .jsonPath("$.message").isEqualTo("Usuário inativado com sucesso");
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnNotFoundWhenUsuarioNotExists() {
+        webTestClient.patch()
+                .uri(ApiPath.USUARIOS + "/9999/" + "inativar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getValidToken())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.message").exists()
+                .jsonPath("$.message").isEqualTo("Usuário inativado com sucesso");
     }
 
 }
