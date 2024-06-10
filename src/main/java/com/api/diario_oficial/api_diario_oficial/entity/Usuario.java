@@ -57,15 +57,19 @@ public class Usuario {
         this.email = email;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        setCreatedAt(LocalDateTime.now());
-        setStatusUsuario(StatusUsuario.INATIVO);
-    }
-
     @PreUpdate
     protected void onUpdate() {
         setUpdatedAt(LocalDateTime.now());
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void beforeSaveOrUpdate() {
+        setCreatedAt(LocalDateTime.now());
+        setStatusUsuario(StatusUsuario.INATIVO);
+        this.username = this.username.trim();
+        this.email = this.email.trim();
+
     }
 
     public Long getId() {
