@@ -1,10 +1,10 @@
 package com.api.diario_oficial.api_diario_oficial.services.implementations;
 
+import com.api.diario_oficial.api_diario_oficial.database.repository.IUsuarioRepository;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
-import com.api.diario_oficial.api_diario_oficial.database.repository.IUsuarioRepository;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
 import org.springframework.data.domain.Page;
@@ -38,12 +38,16 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public void inativarUsuario(Long id) throws EntityNotFoundException {
-
+        Usuario usuario = findOrFail(id);
+        usuario.setStatusUsuario(StatusUsuario.INATIVO);
+        usuarioRepository.save(usuario);
     }
 
     @Override
     public void ativarUsuario(Long id) throws EntityNotFoundException {
-
+        Usuario usuario = findOrFail(id);
+        usuario.setStatusUsuario(StatusUsuario.ATIVO);
+        usuarioRepository.save(usuario);
     }
 
     @Override
@@ -91,7 +95,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Usuario findOrFail(Long id) throws EntityNotFoundException {
-        return null;
+        return usuarioRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Usuario com id '%s' não foi encontrado", id))
+        );
     }
 
     @Override
@@ -101,17 +107,21 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public Usuario update(Usuario entity, Long id) throws EntityNotFoundException {
-        return null;
+    public Usuario update(Usuario usuario) throws EntityNotFoundException {
+        if (existsById(usuario.getId())) {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            return usuarioRepository.save(usuario);
+        }
+        throw new EntityNotFoundException(String.format("Usuário de id %s não encontrado", usuario.getId()));
     }
 
     @Override
     public void delete(Usuario entity) throws EntityNotFoundException {
-
+        usuarioRepository.delete(entity);
     }
 
     @Override
     public boolean existsById(Long id) {
-        return false;
+        return usuarioRepository.existsById(id);
     }
 }

@@ -4,7 +4,6 @@ import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

@@ -20,7 +20,7 @@ public interface IServiceBase<E, Long> {
             throws EntityNotFoundException;
     E save(E entity);
 
-    E update(E entity, Long id) throws EntityNotFoundException;
+    E update(E entity) throws EntityNotFoundException;
 
     void delete(E entity) throws EntityNotFoundException;
 
