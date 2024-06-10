@@ -14,4 +14,6 @@ public interface IUsuarioRepository extends IRepositoryBase<Usuario, Long> {
 
     @Query("select u.role from Usuario u where u.username like :username")
     Role findRoleByUsername(String username);
+
+    Optional<Usuario> findByEmail(String email);
 }
