@@ -1,5 +1,6 @@
 package com.api.diario_oficial.api_diario_oficial.exceptions.handler;
 
+import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EmailAlreadyRegistered;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.UserNameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,6 +46,16 @@ public class ApiExceptionHandler {
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campo(s) inválidos", result));
+    }
+
+    @ExceptionHandler(EmailAlreadyRegistered.class)
+    public ResponseEntity<ErrorMessage> emailAlreadyRegisteredException(RuntimeException ex,
+                                                                HttpServletRequest request) {
+        log.error("APi error = ", ex);
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage()));
     }
 
 }

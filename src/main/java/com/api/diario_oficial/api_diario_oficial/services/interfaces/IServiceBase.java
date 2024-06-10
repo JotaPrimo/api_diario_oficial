@@ -25,4 +25,6 @@ public interface IServiceBase<E, Long> {
     void delete(E entity) throws EntityNotFoundException;
 
     boolean existsById(Long id);
+
+    boolean notExistsById(Long id);
 }

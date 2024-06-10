@@ -15,4 +15,5 @@ public interface IRepositoryBase<T, ID> extends JpaRepository<T, ID> {
     List<T> findAllOrderById();
 
     Page<T> findAll(Pageable pageable);
+
 }
