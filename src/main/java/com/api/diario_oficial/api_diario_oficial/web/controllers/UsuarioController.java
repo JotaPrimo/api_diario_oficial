@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping(ApiPath.USUARIOS)
 public class UsuarioController {
@@ -63,6 +66,24 @@ public class UsuarioController {
         usuarioService.update(usuarioToUpdate);
 
         return ResponseEntity.ok(UsuarioResponseDTO.fromEntity(usuarioToUpdate));
+    }
+
+    @PatchMapping("/{id}/ativar")
+    public ResponseEntity<Map<String, String>> ativar(@PathVariable Long id) {
+        usuarioService.ativarUsuario(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Usuário ativado com sucesso");
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/inativar")
+    public ResponseEntity<Map<String, String>> inativar(@PathVariable Long id) {
+        usuarioService.inativarUsuario(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Usuário inativado com sucesso");
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
