@@ -39,10 +39,15 @@ public class UsuarioController {
     public Page<UsuarioResponseDTO> index(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestBody UsuarioSearchDTO usuarioSearchDTO
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String statusUsuario,
+            @RequestParam(required = false) String role
     ) {
+        UsuarioSearchDTO searchDTO = UsuarioSearchDTO.resolveUsuarioSearchDTO(id, username, email, statusUsuario, role);
+
         Pageable pageable = PageRequest.of(page, size);
-        UsuarioSearchDTO searchDTO = UsuarioSearchDTO.resolveUsuarioSearchDTO(usuarioSearchDTO);
         return usuarioService
                 .search(searchDTO, pageable)
                 .map(UsuarioResponseDTO::fromEntity);
