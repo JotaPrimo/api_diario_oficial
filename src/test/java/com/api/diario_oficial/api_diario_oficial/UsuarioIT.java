@@ -5,6 +5,7 @@ import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioUpdateDTO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -299,6 +300,36 @@ public class UsuarioIT {
                 .expectBody()
                 .jsonPath("$.message").exists()
                 .jsonPath("$.message").isEqualTo("Usuário inativado com sucesso");
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnFoundWhenUsuarioNotExists() {
+        UsuarioSearchDTO usuarioSearchDTO = new UsuarioSearchDTO(null, null, null,
+                "ATIVO",
+                Role.ROLE_CLIENTE_COLABORADOR.name());
+
+        webTestClient.get()
+                .uri(ApiPath.USUARIOS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(usuarioSearchDTO)
+                .header(HttpHeaders.AUTHORIZATION, getValidToken())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.content").exists()
+                .jsonPath("$.content").isNotEmpty()
+                .jsonPath("$.totalPages").exists()
+                .jsonPath("$.totalPages").isEqualTo(1)
+                .jsonPath("$.content[0].statusUsuario").exists()
+                .jsonPath("$.content[0].statusUsuario").isEqualTo("ATIVO")
+                .jsonPath("$.content[0].role").exists()
+                .jsonPath("$.content[0].role").isEqualTo("ROLE_COLABORADOR")
+                .jsonPath("$.totalElements").exists()
+                .jsonPath("$.totalElements").isEqualTo(3);
     }
 
 }
