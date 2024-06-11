@@ -6,4 +6,5 @@ public interface IRecordSearch {
     default boolean isAnyFieldFilled() {
         return !isEmpty();
     }
+
 }

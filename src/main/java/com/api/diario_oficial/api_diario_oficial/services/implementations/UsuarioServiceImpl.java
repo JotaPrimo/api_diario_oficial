@@ -5,7 +5,9 @@ import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
+import com.api.diario_oficial.api_diario_oficial.services.filters.usuarios.UsuarioFilter;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
+import com.api.diario_oficial.api_diario_oficial.utils.UtilsValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.store.GerenciadorUsuarioValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.update.GerenciadorUsuarioUpdateValidators;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,6 +33,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     private GerenciadorUsuarioUpdateValidators updateValidators;
 
+    private UsuarioFilter usuarioFilter;
+
+
     public UsuarioServiceImpl(IUsuarioRepository IUsuarioRepository, PasswordEncoder passwordEncoder, GerenciadorUsuarioValidators usuarioValidators) {
         this.usuarioRepository = IUsuarioRepository;
         this.passwordEncoder = passwordEncoder;
@@ -41,10 +47,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         return null;
     }
 
-    @Override
-    public List<Usuario> search(UsuarioSearchDTO searchDto) {
-        return List.of();
-    }
 
     @Override
     @Transactional
@@ -100,6 +102,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Transactional(readOnly = true)
     public Page<Usuario> findAll(Pageable pageable) {
         return usuarioRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Usuario> search(UsuarioSearchDTO searchDto, Pageable pageable) {
+        UsuarioFilter usuarioFilter = new UsuarioFilter();
+        List<Usuario> usuariosFIltrados = usuarioFilter.filterUsers(searchDto, usuarioRepository.findAll());
+
+        return PaginationService.paginate(usuariosFIltrados, pageable);
     }
 
     @Override
