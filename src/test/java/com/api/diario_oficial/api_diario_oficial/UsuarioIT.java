@@ -305,14 +305,13 @@ public class UsuarioIT {
     @Test
     @SneakyThrows
     void shouldReturnFoundWhenUsuarioNotExists() {
-        UsuarioSearchDTO usuarioSearchDTO = new UsuarioSearchDTO(null, null, null,
-                "ATIVO",
-                Role.ROLE_CLIENTE_COLABORADOR.name());
 
         webTestClient.get()
-                .uri(ApiPath.USUARIOS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(usuarioSearchDTO)
+                .uri(uriBuilder -> uriBuilder.path(ApiPath.USUARIOS)
+                        .queryParam("role", Role.ROLE_CLIENTE_COLABORADOR.name())
+                        .queryParam("statusUsuario", "ATIVO")
+                        .build())
+
                 .header(HttpHeaders.AUTHORIZATION, getValidToken())
                 .exchange()
                 .expectStatus()
