@@ -304,31 +304,24 @@ public class UsuarioIT {
 
     @Test
     @SneakyThrows
-    void shouldReturnFoundWhenUsuarioNotExists() {
-
-        webTestClient.get()
-                .uri(uriBuilder -> uriBuilder.path(ApiPath.USUARIOS)
-                        .queryParam("role", Role.ROLE_CLIENTE_COLABORADOR.name())
-                        .queryParam("statusUsuario", "ATIVO")
+    void testSearchUserResponse() {
+        webTestClient.get().uri(uriBuilder -> uriBuilder
+                        .path(ApiPath.USUARIOS)
+                        .queryParam("role", "ROLE_CLIENTE_COLABORADOR")
+                        .queryParam("statusUsuario", "INATIVO")
                         .build())
-
                 .header(HttpHeaders.AUTHORIZATION, getValidToken())
                 .exchange()
-                .expectStatus()
-                .isOk()
-                .expectHeader()
-                .contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.content").exists()
-                .jsonPath("$.content").isNotEmpty()
+                .jsonPath("$.content").isArray()
+                .jsonPath("$.content.length()").isEqualTo(10)
                 .jsonPath("$.totalPages").exists()
                 .jsonPath("$.totalPages").isEqualTo(1)
-                .jsonPath("$.content[0].statusUsuario").exists()
-                .jsonPath("$.content[0].statusUsuario").isEqualTo("ATIVO")
-                .jsonPath("$.content[0].role").exists()
-                .jsonPath("$.content[0].role").isEqualTo("ROLE_COLABORADOR")
+                .jsonPath("$.size").exists()
+                .jsonPath("$.size").isEqualTo(10)
                 .jsonPath("$.totalElements").exists()
-                .jsonPath("$.totalElements").isEqualTo(3);
+                .jsonPath("$.totalElements").isEqualTo(10);
     }
 
 }

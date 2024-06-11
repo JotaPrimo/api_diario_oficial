@@ -101,9 +101,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Page<Usuario> search(UsuarioSearchDTO searchDto, Pageable pageable) {
-        List<Usuario> usuariosFIltrados = usuarioRepository.findAll(UsuarioSearchSpecification.toSpecification(searchDto));
-
-        return PaginationService.paginate(usuariosFIltrados, pageable);
+        return usuarioRepository.findAll(UsuarioSearchSpecification.toSpecification(searchDto), pageable);
     }
 
     @Override

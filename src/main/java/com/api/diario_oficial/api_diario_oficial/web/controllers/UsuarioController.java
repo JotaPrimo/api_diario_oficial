@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,6 +40,8 @@ public class UsuarioController {
     public Page<UsuarioResponseDTO> index(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @RequestParam(value = "dir", defaultValue = "asc") String dir,
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String email,
@@ -47,7 +50,8 @@ public class UsuarioController {
     ) {
         UsuarioSearchDTO searchDTO = UsuarioSearchDTO.resolveUsuarioSearchDTO(id, username, email, statusUsuario, role);
 
-        Pageable pageable = PageRequest.of(page, size);
+        Sort.Direction direction = dir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
         return usuarioService
                 .search(searchDTO, pageable)
                 .map(UsuarioResponseDTO::fromEntity);
