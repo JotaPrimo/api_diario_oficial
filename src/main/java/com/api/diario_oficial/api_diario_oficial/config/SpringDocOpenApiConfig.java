@@ -19,7 +19,7 @@ public class SpringDocOpenApiConfig {
                                 .description("API para gestão de diário oficial")
                                 .version("v1")
                                 .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0"))
-                                .contact(new Contact().name("Marcio Ballem").email("jotasantos@gmail.com"))
+                                .contact(new Contact().name("Jota Santos").email("jotasantos@gmail.com"))
                 );
     }
 }
