@@ -2,13 +2,14 @@ package com.api.diario_oficial.api_diario_oficial.database.repository;
 
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface IUsuarioRepository extends IRepositoryBase<Usuario, Long> {
+public interface IUsuarioRepository extends IRepositoryBase<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
 
     Optional<Usuario> findByUsername(String username);
 

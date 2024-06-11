@@ -5,6 +5,7 @@ import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
+import com.api.diario_oficial.api_diario_oficial.services.filters.UsuarioSearchSpecification;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.store.GerenciadorUsuarioValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.update.GerenciadorUsuarioUpdateValidators;
@@ -41,10 +42,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         return null;
     }
 
-    @Override
-    public List<Usuario> search(UsuarioSearchDTO searchDto) {
-        return List.of();
-    }
 
     @Override
     @Transactional
@@ -100,6 +97,13 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Transactional(readOnly = true)
     public Page<Usuario> findAll(Pageable pageable) {
         return usuarioRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Usuario> search(UsuarioSearchDTO searchDto, Pageable pageable) {
+        List<Usuario> usuariosFIltrados = usuarioRepository.findAll(UsuarioSearchSpecification.toSpecification(searchDto));
+
+        return PaginationService.paginate(usuariosFIltrados, pageable);
     }
 
     @Override

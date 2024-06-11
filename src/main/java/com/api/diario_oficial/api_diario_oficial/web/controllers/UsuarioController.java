@@ -7,6 +7,7 @@ import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioCreateDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioResponseDTO;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioUpdateDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,10 +38,19 @@ public class UsuarioController {
     @GetMapping
     public Page<UsuarioResponseDTO> index(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String statusUsuario,
+            @RequestParam(required = false) String role
     ) {
+        UsuarioSearchDTO searchDTO = UsuarioSearchDTO.resolveUsuarioSearchDTO(id, username, email, statusUsuario, role);
+
         Pageable pageable = PageRequest.of(page, size);
-        return usuarioService.findAll(pageable).map(UsuarioResponseDTO::fromEntity);
+        return usuarioService
+                .search(searchDTO, pageable)
+                .map(UsuarioResponseDTO::fromEntity);
     }
 
     @PostMapping
