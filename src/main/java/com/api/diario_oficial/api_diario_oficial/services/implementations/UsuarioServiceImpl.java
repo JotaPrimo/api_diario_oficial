@@ -5,9 +5,8 @@ import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
-import com.api.diario_oficial.api_diario_oficial.services.filters.usuarios.UsuarioFilter;
+import com.api.diario_oficial.api_diario_oficial.services.filters.UsuarioSearchSpecification;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
-import com.api.diario_oficial.api_diario_oficial.utils.UtilsValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.store.GerenciadorUsuarioValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.update.GerenciadorUsuarioUpdateValidators;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -32,9 +30,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private GerenciadorUsuarioValidators storeValidators;
 
     private GerenciadorUsuarioUpdateValidators updateValidators;
-
-    private UsuarioFilter usuarioFilter;
-
 
     public UsuarioServiceImpl(IUsuarioRepository IUsuarioRepository, PasswordEncoder passwordEncoder, GerenciadorUsuarioValidators usuarioValidators) {
         this.usuarioRepository = IUsuarioRepository;
@@ -106,8 +101,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public Page<Usuario> search(UsuarioSearchDTO searchDto, Pageable pageable) {
-        UsuarioFilter usuarioFilter = new UsuarioFilter();
-        List<Usuario> usuariosFIltrados = usuarioFilter.filterUsers(searchDto, usuarioRepository.findAll());
+        List<Usuario> usuariosFIltrados = usuarioRepository.findAll(UsuarioSearchSpecification.toSpecification(searchDto));
 
         return PaginationService.paginate(usuariosFIltrados, pageable);
     }
