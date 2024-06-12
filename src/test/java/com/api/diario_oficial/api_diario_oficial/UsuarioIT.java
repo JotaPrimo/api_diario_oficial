@@ -311,7 +311,6 @@ public class UsuarioIT {
                         .queryParam("role", Role.ROLE_CLIENTE_COLABORADOR.name())
                         .queryParam("statusUsuario", "ATIVO")
                         .build())
-
                 .header(HttpHeaders.AUTHORIZATION, getValidToken())
                 .exchange()
                 .expectStatus()
