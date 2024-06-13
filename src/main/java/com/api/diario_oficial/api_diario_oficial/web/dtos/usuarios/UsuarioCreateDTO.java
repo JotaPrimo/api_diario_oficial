@@ -3,6 +3,7 @@ package com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
+import com.api.diario_oficial.api_diario_oficial.validation.custom.ValueOfEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -21,6 +22,7 @@ public record UsuarioCreateDTO(
         String password,
 
         @NotBlank(message = "Role é um campo obrigatório")
+        @ValueOfEnum(enumClass = Role.class, message = "Role inválida")
         String role
 ) {
     public static Usuario toEntity(UsuarioCreateDTO usuarioCreateDTO) {
