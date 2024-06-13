@@ -225,7 +225,7 @@ public class UsuarioIT {
     @Test
     @SneakyThrows
     void shouldReturn200AndUpdatedData() {
-        UsuarioUpdateDTO usuarioUpdateDTO = new UsuarioUpdateDTO("kelley.turcotte.editado", "marcus.bode@hotmail.com", "12345678", Role.ROLE_CLIENTE_ADMIN.toString());
+        UsuarioUpdateDTO usuarioUpdateDTO = new UsuarioUpdateDTO("kelley.turcotte.editado", "marcus.bode@hotmail.com" , Role.ROLE_CLIENTE_ADMIN.toString());
 
         webTestClient.patch()
                 .uri(ApiPath.USUARIOS + "/9")
