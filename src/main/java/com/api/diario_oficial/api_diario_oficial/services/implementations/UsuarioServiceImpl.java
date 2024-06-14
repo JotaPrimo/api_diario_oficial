@@ -31,10 +31,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     private GerenciadorUsuarioUpdateValidators updateValidators;
 
-    public UsuarioServiceImpl(IUsuarioRepository IUsuarioRepository, PasswordEncoder passwordEncoder, GerenciadorUsuarioValidators usuarioValidators) {
+    public UsuarioServiceImpl(IUsuarioRepository IUsuarioRepository, PasswordEncoder passwordEncoder, GerenciadorUsuarioValidators usuarioValidators, GerenciadorUsuarioUpdateValidators updateValidators) {
         this.usuarioRepository = IUsuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.storeValidators = usuarioValidators;
+        this.updateValidators = updateValidators;
     }
 
     @Override
@@ -134,24 +135,29 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional
     public Usuario save(Usuario usuario) {
-
-       storeValidators
-               .getUsuarioValidators()
-               .forEach(iUsuarioValidator -> iUsuarioValidator.validate(usuario));
-
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
     @Override
     @Transactional
-    public Usuario update(Usuario usuario) throws EntityNotFoundException {
+    public Usuario update(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public void validateBeforeSave(Usuario usuario) {
         updateValidators
                 .getUsuarioValidators()
                 .forEach(validators -> validators.validar(usuario));
+    }
 
-        return usuarioRepository.save(usuario);
+    @Override
+    @Transactional(readOnly = true)
+    public void validateBeforeUpdate(Usuario usuario) {
+        updateValidators
+                .getUsuarioValidators()
+                .forEach(validators -> validators.validar(usuario));
     }
 
     @Override
