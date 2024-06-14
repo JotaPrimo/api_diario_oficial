@@ -5,7 +5,6 @@ import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
 import com.api.diario_oficial.api_diario_oficial.enums.Role;
 import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
-import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioUpdateDTO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -226,7 +225,7 @@ public class UsuarioIT {
     @Test
     @SneakyThrows
     void shouldReturn200AndUpdatedData() {
-        UsuarioUpdateDTO usuarioUpdateDTO = new UsuarioUpdateDTO("kelley.turcotte.editado", "marcus.bode@hotmail.com", "12345678", Role.ROLE_CLIENTE_ADMIN.toString());
+        UsuarioUpdateDTO usuarioUpdateDTO = new UsuarioUpdateDTO("kelley.turcotte.editado", "marcus.bode@hotmail.com" , Role.ROLE_CLIENTE_ADMIN.toString());
 
         webTestClient.patch()
                 .uri(ApiPath.USUARIOS + "/9")

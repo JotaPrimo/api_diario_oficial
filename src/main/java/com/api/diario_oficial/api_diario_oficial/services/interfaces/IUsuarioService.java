@@ -31,4 +31,6 @@ public interface IUsuarioService extends IServiceBase<Usuario, Long> {
 
     Role buscarRolePorUsername(String username);
 
+    boolean existsByUsernameAndIdNot(String username, Long id);
+
 }

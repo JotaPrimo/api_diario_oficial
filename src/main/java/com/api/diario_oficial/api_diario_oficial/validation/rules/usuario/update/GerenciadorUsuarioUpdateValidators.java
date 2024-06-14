@@ -32,7 +32,8 @@ public class GerenciadorUsuarioUpdateValidators implements IBaseManagerValidator
     public void defineListValidators() {
         List<IUsuarioUpdateValidators> updateValidators = new ArrayList<>();
         updateValidators.add(new UserExistsValidator(usuarioRepository));
-
+        updateValidators.add(new UsernameValidForUpdateValidator(usuarioRepository));
+        updateValidators.add(new EmailValidForUpdateValidator(usuarioRepository));
         setUsuarioValidators(updateValidators);
     }
 
