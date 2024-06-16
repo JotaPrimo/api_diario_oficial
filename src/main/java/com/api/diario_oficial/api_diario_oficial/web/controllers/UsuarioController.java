@@ -46,7 +46,6 @@ public class UsuarioController {
             @RequestParam(required = false) String role
     ) {
         UsuarioSearchDTO searchDTO = UsuarioSearchDTO.resolveUsuarioSearchDTO(id, username, email, statusUsuario, role);
-
         Pageable pageable = PageRequest.of(page, size);
         return usuarioService
                 .search(searchDTO, pageable)
