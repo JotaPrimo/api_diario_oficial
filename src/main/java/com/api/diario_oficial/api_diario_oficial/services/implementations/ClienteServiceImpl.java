@@ -5,6 +5,7 @@ import com.api.diario_oficial.api_diario_oficial.entity.Cliente;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IClienteService;
 import com.api.diario_oficial.api_diario_oficial.utils.UtilsValidators;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.clientes.ClienteSearchDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -95,5 +96,10 @@ public class ClienteServiceImpl implements IClienteService {
     @Override
     public boolean notExistsById(Long id) {
         return !clienteRepository.existsById(id);
+    }
+
+    @Override
+    public Page<Cliente> search(ClienteSearchDTO searchDto, Pageable pageable) {
+        return null;
     }
 }
