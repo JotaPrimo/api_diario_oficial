@@ -86,6 +86,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
         return usuarioRepository.findRoleByUsername(username);
     }
 
+    @Override
+    public boolean existsByUsernameAndIdNot(String username, Long id) {
+        return usuarioRepository.existsByUsernameAndIdNot(username, id);
+    }
 
     @Override
     @Transactional(readOnly = true)
