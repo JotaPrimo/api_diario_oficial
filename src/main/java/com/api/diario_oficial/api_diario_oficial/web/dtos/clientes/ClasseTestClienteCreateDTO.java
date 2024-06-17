@@ -20,7 +20,7 @@ import com.api.diario_oficial.api_diario_oficial.validation.custom.RequiredInStr
                 message = "outroCampo deve ser preenchido quando algumaOutraCondicao for OUTRO_VALOR"
         )
 })
-public class ClienteDTO {
+public class ClasseTestClienteCreateDTO {
 
     @RequiredInString(values = {"SIM", "NAO"}, message = "possuiDoenca deve ser 'SIM' ou 'NAO'")
     private String possuiDoenca;

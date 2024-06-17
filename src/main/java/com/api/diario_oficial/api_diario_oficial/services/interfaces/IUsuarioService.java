@@ -33,4 +33,11 @@ public interface IUsuarioService extends IServiceBase<Usuario, Long> {
 
     boolean existsByUsernameAndIdNot(String username, Long id);
 
+    void validateBeforeUpdate(Usuario usuario);
+
+    void validateBeforeSave(Usuario usuario);
+
+    Usuario findOrFailByUsername(String username);
+
+    Usuario findOrFailByEmail(String Email);
 }

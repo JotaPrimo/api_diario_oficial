@@ -18,5 +18,4 @@ public class UserExistsValidator implements IUsuarioUpdateValidators {
             throw new EntityNotFoundException(String.format("Usuário de id %s não encontrado", usuario.getId()));
         }
     }
-
 }

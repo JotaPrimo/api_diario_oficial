@@ -46,7 +46,6 @@ public class UsuarioController {
             @RequestParam(required = false) String role
     ) {
         UsuarioSearchDTO searchDTO = UsuarioSearchDTO.resolveUsuarioSearchDTO(id, username, email, statusUsuario, role);
-
         Pageable pageable = PageRequest.of(page, size);
         return usuarioService
                 .search(searchDTO, pageable)
@@ -56,6 +55,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> store(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO) {
         Usuario usuarioToSave = UsuarioCreateDTO.toEntity(usuarioCreateDTO);
+        usuarioService.validateBeforeSave(usuarioToSave);
         Usuario usuarioSaved = usuarioService.save(usuarioToSave);
 
         UsuarioCriadoEvent event = new UsuarioCriadoEvent(this, usuarioSaved);
@@ -74,6 +74,7 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateDTO usuarioUpdateDTO) {
         Usuario usuarioToUpdate = UsuarioUpdateDTO.toEntity(usuarioUpdateDTO, usuarioService.findOrFail(id));
 
+        usuarioService.validateBeforeUpdate(usuarioToUpdate);
         usuarioService.update(usuarioToUpdate);
 
         return ResponseEntity.ok(UsuarioResponseDTO.fromEntity(usuarioToUpdate));
@@ -89,7 +90,8 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}/inativar")
-    public ResponseEntity<Map<String, String>> inativar(@PathVariable Long id, @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+    public ResponseEntity<Map<String, String>> inativar(@PathVariable Long id) {
+        // @AuthenticationPrincipal JwtUserDetails jwtUserDetails passar como parametro
         // @AuthenticationPrincipal JwtUserDetails jwtUserDetails retorna os dados do usuario logado
         usuarioService.inativarUsuario(id);
 
