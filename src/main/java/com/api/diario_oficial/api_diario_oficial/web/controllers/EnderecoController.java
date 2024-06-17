@@ -6,6 +6,7 @@ import com.api.diario_oficial.api_diario_oficial.web.dtos.enderecos.EnderecoResp
 import com.api.diario_oficial.api_diario_oficial.web.dtos.enderecos.EnderecoSearchDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioResponseDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class EnderecoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EnderecoResponseDTO>> index(
+    public Page<EnderecoResponseDTO> index(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(required = false) Long id,
@@ -43,7 +44,6 @@ public class EnderecoController {
         return enderecoService
                 .search(searchDTO, pageable)
                 .map(EnderecoResponseDTO::fromEntity);
-
     }
 
 }
