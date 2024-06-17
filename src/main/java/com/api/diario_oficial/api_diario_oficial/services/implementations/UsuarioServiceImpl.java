@@ -7,18 +7,20 @@ import com.api.diario_oficial.api_diario_oficial.enums.StatusUsuario;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
 import com.api.diario_oficial.api_diario_oficial.services.filters.UsuarioSearchSpecification;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IUsuarioService;
+import com.api.diario_oficial.api_diario_oficial.utils.UtilsValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.store.GerenciadorUsuarioValidators;
 import com.api.diario_oficial.api_diario_oficial.validation.rules.usuario.update.GerenciadorUsuarioUpdateValidators;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioSearchDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
@@ -114,12 +116,18 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional(readOnly = true)
     public Page<Usuario> findAllSortedById(Pageable pageable) {
-        return usuarioRepository.findAll(pageable);
+        Pageable sortedById = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("id"));
+        return usuarioRepository.findAll(sortedById);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Usuario findById(Long id) {
+
+        if (UtilsValidators.longIsNullOrZero(id)) {
+            throw new IllegalArgumentException("ID do usuário não pode ser nulo");
+        }
+
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         return usuarioOptional.orElse(null);
     }
@@ -127,6 +135,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional(readOnly = true)
     public Usuario findOrFail(Long id) throws EntityNotFoundException {
+
+        if (UtilsValidators.longIsNullOrZero(id)) {
+            throw new IllegalArgumentException("ID do usuário não pode ser nulo");
+        }
+
         return usuarioRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Usuario com id '%s' não foi encontrado", id))
         );
@@ -135,12 +148,20 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional
     public Usuario save(Usuario usuario) {
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuário não pode ser nulo");
+        }
+
         return usuarioRepository.save(usuario);
     }
 
     @Override
     @Transactional
     public Usuario update(Usuario usuario) {
+        if (usuario == null || UtilsValidators.longIsNullOrZero(usuario.getId())) {
+            throw new IllegalArgumentException("Usuário ou id não pode ser nulo");
+        }
         return usuarioRepository.save(usuario);
     }
 
@@ -150,6 +171,16 @@ public class UsuarioServiceImpl implements IUsuarioService {
         updateValidators
                 .getUsuarioValidators()
                 .forEach(validators -> validators.validar(usuario));
+    }
+
+    @Override
+    public Usuario findOrFailByUsername(String username) {
+        return usuarioRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException(String.format("Usuario com username '%s' não foi encontrado", username)));
+    }
+
+    @Override
+    public Usuario findOrFailByEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(String.format("Usuario com email '%s' não foi encontrado", email)));
     }
 
     @Override
@@ -163,16 +194,31 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional
     public void delete(Usuario entity) throws EntityNotFoundException {
-        usuarioRepository.delete(entity);
+
+        if (entity == null || UtilsValidators.longIsNullOrZero(entity.getId())) {
+            throw new IllegalArgumentException("Usuario ou ID do cliente não pode ser nulo");
+        }
+
+        Usuario usuarioForDelete = findOrFail(entity.getId());
+        usuarioRepository.delete(usuarioForDelete);
     }
 
     @Override
     public boolean existsById(Long id) {
+        if (UtilsValidators.longIsNullOrZero(id)) {
+            throw new IllegalArgumentException("Id do usuário não pode ser nulo");
+        }
+
         return usuarioRepository.existsById(id);
     }
 
     @Override
     public boolean notExistsById(Long id) {
+
+        if (UtilsValidators.longIsNullOrZero(id)) {
+            throw new IllegalArgumentException("Id do usuário não pode ser nulo");
+        }
+
         return !usuarioRepository.existsById(id);
     }
 }

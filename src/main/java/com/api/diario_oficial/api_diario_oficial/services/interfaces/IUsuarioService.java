@@ -36,4 +36,8 @@ public interface IUsuarioService extends IServiceBase<Usuario, Long> {
     void validateBeforeUpdate(Usuario usuario);
 
     void validateBeforeSave(Usuario usuario);
+
+    Usuario findOrFailByUsername(String username);
+
+    Usuario findOrFailByEmail(String Email);
 }
