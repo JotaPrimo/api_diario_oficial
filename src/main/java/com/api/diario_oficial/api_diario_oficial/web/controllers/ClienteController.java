@@ -34,7 +34,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public Page<ClienteResponseDTO> listClientes(
+    public Page<ClienteResponseDTO> index(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(required = false) Long id,
