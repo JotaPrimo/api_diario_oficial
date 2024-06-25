@@ -10,9 +10,14 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private UsuarioSeeder usuarioSeeder;
 
+    @Autowired
+    private EnderecoSeeder enderecoSeeder;
+
     @Override
     public void run(String... args) throws Exception {
         // usuarioSeeder.seedUsuarios();
+        // enderecoSeeder.seed();
+
     }
 
 }
