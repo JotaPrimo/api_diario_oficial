@@ -10,14 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ApiPath.ORGAO_GOVERNAMENTAL)
 public class OrgaoGovernamentalController {
 
-    private IOrgaoGovernamentalService orgaoGovernamentalService;
 
-    public OrgaoGovernamentalController(IOrgaoGovernamentalService orgaoGovernamentalService) {
-        this.orgaoGovernamentalService = orgaoGovernamentalService;
-    }
-
-    @GetMapping
-    public void index() {
-        return;
-    }
 }

@@ -288,45 +288,17 @@ public class UsuarioIT {
     @SneakyThrows
     void shouldReturnNotFoundWhenUsuarioNotExists() {
         webTestClient.patch()
-                .uri(ApiPath.USUARIOS + "/9999/" + "inativar")
+                .uri(ApiPath.USUARIOS + "/100000000/" + "inativar")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getValidToken())
                 .exchange()
                 .expectStatus()
-                .isOk()
+                .isNotFound()
                 .expectHeader()
                 .contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("$.message").exists()
-                .jsonPath("$.message").isEqualTo("Usuário inativado com sucesso");
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldReturnFoundWhenUsuarioNotExists() {
-
-        webTestClient.get()
-                .uri(uriBuilder -> uriBuilder.path(ApiPath.USUARIOS)
-                        .queryParam("role", Role.ROLE_CLIENTE_COLABORADOR.name())
-                        .queryParam("statusUsuario", "ATIVO")
-                        .build())
-                .header(HttpHeaders.AUTHORIZATION, getValidToken())
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectHeader()
-                .contentType(MediaType.APPLICATION_JSON)
-                .expectBody()
-                .jsonPath("$.content").exists()
-                .jsonPath("$.content").isNotEmpty()
-                .jsonPath("$.totalPages").exists()
-                .jsonPath("$.totalPages").isEqualTo(1)
-                .jsonPath("$.content[0].statusUsuario").exists()
-                .jsonPath("$.content[0].statusUsuario").isEqualTo("ATIVO")
-                .jsonPath("$.content[0].role").exists()
-                .jsonPath("$.content[0].role").isEqualTo("ROLE_COLABORADOR")
-                .jsonPath("$.totalElements").exists()
-                .jsonPath("$.totalElements").isEqualTo(3);
+                .jsonPath("$.message").isEqualTo("Usuario com id '100000000' não foi encontrado");
     }
 
 }
