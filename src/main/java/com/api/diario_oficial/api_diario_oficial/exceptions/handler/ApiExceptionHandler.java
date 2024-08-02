@@ -2,6 +2,7 @@ package com.api.diario_oficial.api_diario_oficial.exceptions.handler;
 
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EmailAlreadyRegistered;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.EntityNotFoundException;
+import com.api.diario_oficial.api_diario_oficial.exceptions.custom.InvalidIdException;
 import com.api.diario_oficial.api_diario_oficial.exceptions.custom.UserNameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,17 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyRegistered.class)
     public ResponseEntity<ErrorMessage> emailAlreadyRegisteredException(RuntimeException ex,
-                                                                HttpServletRequest request) {
+                                                                        HttpServletRequest request) {
+        log.error("APi error = ", ex);
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidIdException.class)
+    public ResponseEntity<ErrorMessage> invalidIdException(RuntimeException ex,
+                                                           HttpServletRequest request) {
         log.error("APi error = ", ex);
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
