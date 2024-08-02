@@ -106,5 +106,4 @@ public class UsuarioController {
         usuarioService.delete(usuarioToDelete);
         return ResponseEntity.noContent().build();
     }
-
 }
