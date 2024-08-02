@@ -13,7 +13,7 @@ public class EmailValidForUpdateValidator implements IUsuarioUpdateValidators {
     }
 
     @Override
-    public void validar(Usuario usuario) {
+    public void validate(Usuario usuario) {
         if(usuarioRepository.existsByEmailAndIdNot(usuario.getEmail(), usuario.getId())) {
             throw new UserNameUniqueViolationException("Email inválido");
         }
