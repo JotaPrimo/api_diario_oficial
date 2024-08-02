@@ -168,9 +168,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional(readOnly = true)
     public void validateBeforeSave(Usuario usuario) {
-        updateValidators
+        storeValidators
                 .getUsuarioValidators()
-                .forEach(validators -> validators.validar(usuario));
+                .forEach(validators -> validators.validate(usuario));
     }
 
     @Override
@@ -188,7 +188,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public void validateBeforeUpdate(Usuario usuario) {
         updateValidators
                 .getUsuarioValidators()
-                .forEach(validators -> validators.validar(usuario));
+                .forEach(validators -> validators.validate(usuario));
     }
 
     @Override

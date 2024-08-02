@@ -13,7 +13,7 @@ public class UserExistsValidator implements IUsuarioUpdateValidators {
     }
 
     @Override
-    public void validar(Usuario usuario) {
+    public void validate(Usuario usuario) {
         if (!usuarioRepository.existsById(usuario.getId())) {
             throw new EntityNotFoundException(String.format("Usuário de id %s não encontrado", usuario.getId()));
         }

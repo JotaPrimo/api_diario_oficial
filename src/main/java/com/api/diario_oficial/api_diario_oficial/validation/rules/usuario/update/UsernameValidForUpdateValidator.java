@@ -13,7 +13,7 @@ public class UsernameValidForUpdateValidator implements IUsuarioUpdateValidators
     }
 
     @Override
-    public void validar(Usuario usuario) {
+    public void validate(Usuario usuario) {
         if(usuarioRepository.existsByUsernameAndIdNot(usuario.getUsername(), usuario.getId())) {
             throw new UserNameUniqueViolationException("Username inválido");
         }
