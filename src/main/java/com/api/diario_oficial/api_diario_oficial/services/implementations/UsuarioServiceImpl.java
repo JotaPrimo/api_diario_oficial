@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -148,10 +149,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     @Transactional
     public Usuario save(Usuario usuario) {
-
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuário não pode ser nulo");
-        }
+        Objects.requireNonNull(usuario, "Usuário não pode ser nulo");
 
         return usuarioRepository.save(usuario);
     }

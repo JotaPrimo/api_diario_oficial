@@ -5,13 +5,14 @@ import com.api.diario_oficial.api_diario_oficial.enums.SimNao;
 import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "orgao_governamentals")
-public class OrgaoGovernamental {
+public class OrgaoGovernamental implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,9 +42,27 @@ public class OrgaoGovernamental {
 
     private LocalDateTime updatedAt;
 
+    public OrgaoGovernamental() {
+    }
+
+    public OrgaoGovernamental(String nome, String cnpj) {
+        this.nome = nome;
+        this.cnpj = cnpj;
+    }
+
+    public OrgaoGovernamental(String nome, String cnpj, Endereco endereco, List<Diario> diarios, List<Arquivo> arquivos, List<Cliente> clientes) {
+        this.nome = nome;
+        this.cnpj = cnpj;
+        this.endereco = endereco;
+        this.diarios = diarios;
+        this.arquivos = arquivos;
+        this.clientes = clientes;
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        deletado = SimNao.NAO;
     }
 
     @PreUpdate
@@ -132,7 +151,17 @@ public class OrgaoGovernamental {
     }
 
     public String getCreatedAtFormatado() {
-        return DataUtil.retornaDataFormatadaDMY(this.getCreatedAt());
+        if (getCreatedAt() != null) {
+            return DataUtil.retornaDataFormatadaDMY(this.getCreatedAt());
+        }
+        return null;
+    }
+
+    public String getUpdatedAtFormatado() {
+        if (getUpdatedAt() != null) {
+            return DataUtil.retornaDataFormatadaDMY(this.getUpdatedAt());
+        }
+        return null;
     }
 
     public boolean isDeletado() {

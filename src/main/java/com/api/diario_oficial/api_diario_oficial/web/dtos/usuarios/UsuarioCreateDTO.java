@@ -36,8 +36,4 @@ public record UsuarioCreateDTO(
         return usuario;
     }
 
-    public static UsuarioCreateDTO getNewInstance() {
-        return new UsuarioCreateDTO("", "", "", "");
-    }
-
 }

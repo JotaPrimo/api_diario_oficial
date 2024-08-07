@@ -56,4 +56,14 @@ public class AuthUtils {
         headers.set("Authorization", "Bearer " + loginResponseJson.getString("token"));
         return new HttpEntity<>(headers);
     }
+
+    @SneakyThrows
+    public static String getValidHttpHeadersAuthentication() {
+        JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
+
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity("http://localhost:8082" + ApiPath.AUTENTICAR, jwtUserDetails, String.class);
+        JSONObject loginResponseJon = new JSONObject(loginResponse.getBody());
+
+        return "Bearer " + loginResponseJon.getString("token");
+    }
 }
