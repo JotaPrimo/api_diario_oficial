@@ -2,6 +2,9 @@ package com.api.diario_oficial.api_diario_oficial;
 
 import com.api.diario_oficial.api_diario_oficial.auth.Credentials;
 import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
+import com.api.diario_oficial.api_diario_oficial.entity.Usuario;
+import com.api.diario_oficial.api_diario_oficial.enums.Role;
+import com.api.diario_oficial.api_diario_oficial.jwt.JwtUserDetails;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.usuarios.UsuarioLoginDTO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -21,6 +26,32 @@ public class AutenticacaoIT {
 
     @Autowired
     TestRestTemplate restTemplate;
+
+    public static JwtUserDetails getValidCredentialsLogin() {
+        Usuario usuario = new Usuario();
+        usuario.setUsername(Credentials.TEST_LOGIN_VALID);
+        usuario.setPassword(Credentials.TEST_PASSWORD_VALID);
+        usuario.setRole(Role.ROLE_ADMIN);
+
+        return new JwtUserDetails(usuario);
+    }
+
+
+    @SneakyThrows
+    public HttpEntity<String> getValidHeaderAuthentication() {
+        // Login and get JWT token
+        JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
+
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity(ApiPath.AUTENTICAR, jwtUserDetails, String.class);
+        JSONObject loginResponseJon = new JSONObject(loginResponse.getBody());
+
+        // Use JWT token to access protected endpoint
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + loginResponseJon.getString("token"));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        return entity;
+    }
 
 
     @SneakyThrows

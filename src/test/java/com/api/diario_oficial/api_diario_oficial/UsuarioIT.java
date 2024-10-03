@@ -288,17 +288,18 @@ public class UsuarioIT {
     @SneakyThrows
     void shouldReturnNotFoundWhenUsuarioNotExists() {
         webTestClient.patch()
-                .uri(ApiPath.USUARIOS + "/9999/" + "inativar")
+                .uri(ApiPath.USUARIOS + "/100000000/" + "inativar")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getValidToken())
                 .exchange()
                 .expectStatus()
-                .isOk()
+                .isNotFound()
                 .expectHeader()
                 .contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("$.message").exists()
                 .jsonPath("$.message").isEqualTo("Usuário inativado com sucesso");
+
     }
 
     @Test
@@ -320,7 +321,7 @@ public class UsuarioIT {
                 .jsonPath("$.size").exists()
                 .jsonPath("$.size").isEqualTo(10)
                 .jsonPath("$.totalElements").exists()
-                .jsonPath("$.totalElements").isEqualTo(10);
+                .jsonPath("$.totalElements").isEqualTo(10)
+                .jsonPath("$.message").isEqualTo("Usuario com id '100000000' não foi encontrado");
     }
-
 }

@@ -23,12 +23,14 @@ public class UsuarioSeeder {
     }
 
     public void seedUsuarios() {
-        Faker faker = new Faker();
-        IntStream.rangeClosed(1, 50).forEach(i -> {
+        // Faker faker = new Faker();
+        IntStream.rangeClosed(2001, 8000).forEach(i -> {
             Usuario usuario = new Usuario();
-            usuario.setUsername(faker.name().username());
+            //usuario.setUsername("menadasyu_" + i);
+            // usuario.setUsername(faker.name().username());
             usuario.setPassword(passwordEncoder.encode("12345678"));
-            usuario.setEmail(faker.internet().emailAddress());
+            //usuario.setEmail(faker.internet().emailAddress());
+            //usuario.setEmail("email_for_usuario" + i + "@email.com");
             usuario.setRole(Role.ROLE_COLABORADOR);
             usuarioService.save(usuario);
         });

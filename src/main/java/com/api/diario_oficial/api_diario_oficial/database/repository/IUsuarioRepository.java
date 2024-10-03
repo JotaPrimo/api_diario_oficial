@@ -22,6 +22,6 @@ public interface IUsuarioRepository extends IRepositoryBase<Usuario, Long>, JpaS
     @Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE u.id <> :id AND u.username = :username")
     boolean existsByUsernameAndIdNot(@Param("username") String username, @Param("id") Long id);
 
-    @Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE u.id <> :id AND u.email = :username")
+    @Query("SELECT COUNT(u) > 0 FROM Usuario u WHERE u.id <> :id AND u.email = :email")
     boolean existsByEmailAndIdNot(String email, Long id);
 }
