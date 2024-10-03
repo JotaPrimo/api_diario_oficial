@@ -4,6 +4,8 @@ package com.api.diario_oficial.api_diario_oficial.entity;
 import com.api.diario_oficial.api_diario_oficial.enums.SimNao;
 import com.api.diario_oficial.api_diario_oficial.utils.DataUtil;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +42,15 @@ public class OrgaoGovernamental {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    public OrgaoGovernamental() {
+    }
+
+    public OrgaoGovernamental(Long id, String nome, String cnpj) {
+        this.id = id;
+        this.nome = nome;
+        this.cnpj = cnpj;
+    }
 
     @PrePersist
     protected void onCreate() {
