@@ -46,6 +46,11 @@ public class OrgaoGovernamental {
     public OrgaoGovernamental() {
     }
 
+    public OrgaoGovernamental(String nome, String cnpj) {
+        this.nome = nome;
+        this.cnpj = cnpj;
+    }
+
     public OrgaoGovernamental(Long id, String nome, String cnpj) {
         this.id = id;
         this.nome = nome;
