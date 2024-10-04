@@ -7,6 +7,7 @@ import com.api.diario_oficial.api_diario_oficial.services.filters.OrgaoGovername
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IOrgaoGovernamentalService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalSearchDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -88,6 +89,7 @@ public class OrgaoGovernamentalServiceImpl implements IOrgaoGovernamentalService
     }
 
     @Override
+    @Cacheable
     public Page<OrgaoGovernamental> search(OrgaoGovernamentalSearchDto searchDto, Pageable pageable) {
         Objects.requireNonNull(searchDto, "Objeto de pesquisa não pode ser null");
         return repository.findAll(OrgaoGovernamentalSearchSpecification.toSpecification(searchDto), pageable);
