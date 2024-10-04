@@ -11,12 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-
+@Service
 public class OrgaoGovernamentalServiceImpl implements IOrgaoGovernamentalService {
 
     private final IOrgaoGovernamentalRepository repository;
@@ -37,11 +38,12 @@ public class OrgaoGovernamentalServiceImpl implements IOrgaoGovernamentalService
     }
 
     @Override
-    public Page<OrgaoGovernamental> findAllSortedById(org.springframework.data.domain.Pageable pageable) {
+    public Page<OrgaoGovernamental> findAllSortedById(Pageable pageable) {
         Pageable sortedById = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.ASC);
         return repository.findAll(sortedById);
     }
 
+    /** Método não recomendado, melho usar findOrfail */
     @Override
     public OrgaoGovernamental findById(Long id) {
         Objects.requireNonNull(id, "Id não pode ser null");

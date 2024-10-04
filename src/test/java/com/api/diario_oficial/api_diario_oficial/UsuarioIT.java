@@ -298,7 +298,30 @@ public class UsuarioIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("$.message").exists()
-                .jsonPath("$.message").isEqualTo("Usuario com id '100000000' não foi encontrado");
+                .jsonPath("$.message").isEqualTo("Usuário inativado com sucesso");
+
     }
 
+    @Test
+    @SneakyThrows
+    void testSearchUserResponse() {
+        webTestClient.get().uri(uriBuilder -> uriBuilder
+                        .path(ApiPath.USUARIOS)
+                        .queryParam("role", "ROLE_CLIENTE_COLABORADOR")
+                        .queryParam("statusUsuario", "INATIVO")
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, getValidToken())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.content").isArray()
+                .jsonPath("$.content.length()").isEqualTo(10)
+                .jsonPath("$.totalPages").exists()
+                .jsonPath("$.totalPages").isEqualTo(1)
+                .jsonPath("$.size").exists()
+                .jsonPath("$.size").isEqualTo(10)
+                .jsonPath("$.totalElements").exists()
+                .jsonPath("$.totalElements").isEqualTo(10)
+                .jsonPath("$.message").isEqualTo("Usuario com id '100000000' não foi encontrado");
+    }
 }

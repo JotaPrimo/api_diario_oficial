@@ -5,6 +5,7 @@ import com.api.diario_oficial.api_diario_oficial.utils.UtilsValidators;
 public record OrgaoGovernamentalSearchDto(
         Long id,
         String nome,
+
         String cnpj
 ) {
     public static boolean isEmpty(OrgaoGovernamentalSearchDto dto) {
