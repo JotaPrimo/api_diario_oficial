@@ -28,15 +28,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private GerenciadorUsuarioValidators storeValidators;
 
     private GerenciadorUsuarioUpdateValidators updateValidators;
 
-    public UsuarioServiceImpl(IUsuarioRepository IUsuarioRepository, PasswordEncoder passwordEncoder, GerenciadorUsuarioValidators usuarioValidators, GerenciadorUsuarioUpdateValidators updateValidators) {
+    public UsuarioServiceImpl(IUsuarioRepository IUsuarioRepository, GerenciadorUsuarioValidators usuarioValidators, GerenciadorUsuarioUpdateValidators updateValidators) {
         this.usuarioRepository = IUsuarioRepository;
-        this.passwordEncoder = passwordEncoder;
         this.storeValidators = usuarioValidators;
         this.updateValidators = updateValidators;
     }

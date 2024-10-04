@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class GerenciadorUsuarioValidators implements IBaseManagerValidators {
 
     private IUsuarioRepository usuarioRepository;
@@ -36,5 +35,4 @@ public class GerenciadorUsuarioValidators implements IBaseManagerValidators {
 
         setUsuarioValidators(validators);
     }
-
 }
