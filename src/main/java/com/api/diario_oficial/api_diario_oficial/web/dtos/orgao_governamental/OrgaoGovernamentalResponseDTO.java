@@ -9,8 +9,8 @@ public record OrgaoGovernamentalResponseDTO(
         Long id,
         String nome,
         String cnpj,
-        String createdAt,
-        String updatedAt
+        String created_at,
+        String updated_at
 ) {
 
     public static OrgaoGovernamentalResponseDTO fromEntity(OrgaoGovernamental orgaoGovernamental) {
@@ -19,6 +19,6 @@ public record OrgaoGovernamentalResponseDTO(
                 orgaoGovernamental.getNome(),
                 orgaoGovernamental.getCnpj(),
                 orgaoGovernamental.getCreatedAt().toString(),
-                orgaoGovernamental.getUpdatedAt().toString());
+                null);
     }
 }
