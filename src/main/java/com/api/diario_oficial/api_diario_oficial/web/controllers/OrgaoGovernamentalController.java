@@ -1,19 +1,20 @@
 package com.api.diario_oficial.api_diario_oficial.web.controllers;
 
 import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
+import com.api.diario_oficial.api_diario_oficial.entity.OrgaoGovernamental;
 import com.api.diario_oficial.api_diario_oficial.services.implementations.OrgaoGovernamentalServiceImpl;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IOrgaoGovernamentalService;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalResponseDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalSearchDto;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,16 +30,30 @@ public class OrgaoGovernamentalController {
     }
 
     @GetMapping
-    public Page<OrgaoGovernamentalResponseDTO> list(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(required = false) Long id,
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String cnpj
+    public ResponseEntity<Page<OrgaoGovernamentalResponseDTO>> list(
+            @RequestParam(value = "page", defaultValue = "0") @Min(0) int page,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) int size,
+            @ModelAttribute OrgaoGovernamentalSearchDto searchDto
     ) {
-        OrgaoGovernamentalSearchDto searchDto = OrgaoGovernamentalSearchDto.resolveEnderecoSearchDTO(id, nome, cnpj);
         Pageable pageable = PageRequest.of(page, size);
+        Page<OrgaoGovernamentalResponseDTO> listagem = service.search(searchDto, pageable).map(OrgaoGovernamentalResponseDTO::fromEntity);
 
-        return service.search(searchDto, pageable).map(OrgaoGovernamentalResponseDTO::fromEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(listagem);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrgaoGovernamentalResponseDTO> findById(@PathVariable @Min(0) Long id) {
+        OrgaoGovernamental orgaoGovernamental = service.findOrFail(id);
+        OrgaoGovernamentalResponseDTO responseDTO = OrgaoGovernamentalResponseDTO.fromEntity(orgaoGovernamental);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable @Min(0) Long id) {
+        OrgaoGovernamental orgaoGovernamental = service.findOrFail(id);
+        service.delete(orgaoGovernamental);
+
+        return ResponseEntity.noContent().build();
     }
 }
