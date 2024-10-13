@@ -4,6 +4,7 @@ import com.api.diario_oficial.api_diario_oficial.config.ApiPath;
 import com.api.diario_oficial.api_diario_oficial.entity.OrgaoGovernamental;
 import com.api.diario_oficial.api_diario_oficial.services.implementations.OrgaoGovernamentalServiceImpl;
 import com.api.diario_oficial.api_diario_oficial.services.interfaces.IOrgaoGovernamentalService;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalCreateDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalResponseDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalSearchDto;
 import jakarta.validation.constraints.Max;
@@ -39,6 +40,14 @@ public class OrgaoGovernamentalController {
         Page<OrgaoGovernamentalResponseDTO> listagem = service.search(searchDto, pageable).map(OrgaoGovernamentalResponseDTO::fromEntity);
 
         return ResponseEntity.status(HttpStatus.OK).body(listagem);
+    }
+
+    @PostMapping
+    public ResponseEntity<OrgaoGovernamentalResponseDTO> create(@RequestBody OrgaoGovernamentalCreateDTO createDTO) {
+        OrgaoGovernamental orgaoGovernamentalCreated = service.save(OrgaoGovernamentalCreateDTO.toEntity(createDTO));
+        OrgaoGovernamentalResponseDTO orgaoGovernamentalResponseDTO = OrgaoGovernamentalResponseDTO.fromEntity(orgaoGovernamentalCreated);
+
+        return ResponseEntity.status(HttpStatus.OK).body(orgaoGovernamentalResponseDTO);
     }
 
     @GetMapping("/{id}")
