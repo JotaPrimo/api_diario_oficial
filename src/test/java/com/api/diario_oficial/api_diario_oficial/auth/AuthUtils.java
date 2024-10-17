@@ -61,7 +61,7 @@ public class AuthUtils {
     public static String getValidHttpHeadersAuthentication() {
         JwtUserDetails jwtUserDetails = getValidCredentialsLogin();
 
-        ResponseEntity<String> loginResponse = restTemplate.postForEntity("http://localhost:8082" + ApiPath.AUTENTICAR, jwtUserDetails, String.class);
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity("http://localhost:8080" + ApiPath.AUTENTICAR, jwtUserDetails, String.class);
         JSONObject loginResponseJon = new JSONObject(loginResponse.getBody());
 
         return "Bearer " + loginResponseJon.getString("token");
