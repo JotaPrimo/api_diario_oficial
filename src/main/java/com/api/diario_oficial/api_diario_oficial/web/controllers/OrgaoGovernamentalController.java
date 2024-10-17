@@ -7,7 +7,8 @@ import com.api.diario_oficial.api_diario_oficial.services.interfaces.IOrgaoGover
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalCreateDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalResponseDTO;
 import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalSearchDto;
-import jakarta.validation.constraints.Max;
+import com.api.diario_oficial.api_diario_oficial.web.dtos.orgao_governamental.OrgaoGovernamentalUpdateDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(ApiPath.ORGAO_GOVERNAMENTAL)
@@ -54,6 +53,15 @@ public class OrgaoGovernamentalController {
     public ResponseEntity<OrgaoGovernamentalResponseDTO> findById(@PathVariable @Min(0) Long id) {
         OrgaoGovernamental orgaoGovernamental = service.findOrFail(id);
         OrgaoGovernamentalResponseDTO responseDTO = OrgaoGovernamentalResponseDTO.fromEntity(orgaoGovernamental);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrgaoGovernamentalResponseDTO> update(@PathVariable Long id, @RequestBody @Valid OrgaoGovernamentalUpdateDto dto) {
+        OrgaoGovernamental orgaoGovernamental = OrgaoGovernamentalUpdateDto.transferData(dto, service.findOrFail(id));
+        OrgaoGovernamental orgaoGovernamentalUpdated = service.update(orgaoGovernamental);
+        OrgaoGovernamentalResponseDTO responseDTO = OrgaoGovernamentalResponseDTO.fromEntity(orgaoGovernamentalUpdated);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
