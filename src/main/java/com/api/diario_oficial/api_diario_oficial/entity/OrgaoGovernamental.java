@@ -60,6 +60,7 @@ public class OrgaoGovernamental {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        setDeletado(SimNao.NAO);
     }
 
     @PreUpdate

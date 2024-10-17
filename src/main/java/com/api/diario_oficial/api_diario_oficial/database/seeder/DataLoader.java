@@ -15,9 +15,11 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // usuarioSeeder.seedUsuarios();
+        System.out.println("=======================================================");
+        System.out.println("=======================================================");
+        System.out.println("=======================================================");
+        System.out.println("=======================================================");
+        usuarioSeeder.seedUsuarios();
         // enderecoSeeder.seed();
-
     }
-
 }
