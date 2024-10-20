@@ -1,0 +1,4 @@
+para iniciar a aplicação
+    docker-compose up
+
+ Obs: isso inicia a network, permitindo comunição entre os componentes

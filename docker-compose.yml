@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  postgres:
-    container_name: postgres
+  postgres_do:
+    container_name: postgres_do
     image: postgres:latest
     restart: always
     environment:
@@ -10,16 +10,27 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    networks:
+      - network_api_diario_oficial
 
   app:
-    image: api_diario_oficial
     build:
       context: .
       dockerfile: Dockerfile
+    image: api_diario_oficial
+    volumes:
+      - ./src:/app/src
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/api_diario_oficial
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_do:5432/api_diario_oficial
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - postgres_do
+    networks:
+      - network_api_diario_oficial
+
+networks:
+   network_api_diario_oficial:
