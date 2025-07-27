@@ -1,13 +1,11 @@
-FROM openjdk:21
-LABEL authors="jotasantos"
+# from é versão da imagem que vou utilizar
+FROM alpine:3.21
 
-ARG JAR_FILE=target/*.jar
+# executa comandos na etapa de construção
+RUN apk add --no-cache openjdk21-jre
 
-WORKDIR /app
+# vai copiar algo do host (minha maquina), para container
+COPY target/api-diario-oficial.jar /app/api-diario-oficial.jar
 
-COPY ${JAR_FILE} app.jar
-
-# Expõe a porta na qual o Spring Boot vai rodar (8080 por padrão)
-EXPOSE 8082
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# CMD COMANDO QUE SERÁ EXECUTADO DENTRO DO CONTAINER
+CMD java -jar /app/api-diario-oficial.jar
